@@ -32,29 +32,49 @@ export default function SignupPage() {
       password,
     })
 
-    if (authError || !authData.user) {
-      setError(authError?.message || 'Failed to create account')
+    if (authError) {
+      setError(authError.message)
       setLoading(false)
       return
     }
 
-    // Create org, profile, and API key using service client
+    if (!authData.user) {
+      setError('Failed to create account')
+      setLoading(false)
+      return
+    }
+
+    // Set up account data
     try {
       const response = await fetch('/api/setup-account', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           userId: authData.user.id,
-          orgName: orgName || `${email.split('@')[0]}'s Org`,
+          orgName: orgName || `${email.split('@')[0]}'s Organization`,
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to set up account')
+        const data = await response.json()
+        throw new Error(data.error || 'Setup failed')
       }
 
-      router.push('/dashboard')
-    } catch (err) {
+      // Check if email confirmation is required
+      if (authData.user.email_confirmed_at) {
+        // Email already confirmed (shouldn't happen but just in case)
+        router.push('/dashboard')
+      } else {
+        // Show success message for email confirmation
+        setError('') // Clear any errors
+        alert('Success! Please check your email to confirm your account.')
+        router.push('/login')
+      }
+
+    } catch (err: any) {
+      console.error('Setup error:', err)
       setError('Account created but setup failed. Please contact support.')
       setLoading(false)
     }
