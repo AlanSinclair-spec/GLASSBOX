@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if API key is revoked
     if (apiKeyData.revoked_at) {
       return NextResponse.json(
         { error: 'API key is revoked' },
