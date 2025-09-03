@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2 } from 'lucide-react'
+import Link from 'next/link'
 
 export function Pricing() {
   const plans = [
@@ -93,8 +94,10 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'}>
-                  {plan.cta}
+                <Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'} asChild>
+                  <Link href="/signup">
+                    {plan.cta}
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
