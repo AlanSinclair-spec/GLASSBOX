@@ -1,11 +1,13 @@
-import { Database, DollarSign, BarChart3, Activity, Code2, Shield } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { GlassBoxLogo } from '@/components/logo'
+import { Zap, Shield, BarChart3, Clock, DollarSign, Activity, Code2 } from 'lucide-react'
 
 export function Features() {
   const features = [
     {
       name: 'Real-time Logging',
       description: 'Stream events from your agents with our simple REST API. One endpoint, infinite insights.',
-      icon: Database,
+      icon: GlassBoxLogo,
       gradient: 'from-blue-500 to-cyan-500'
     },
     {

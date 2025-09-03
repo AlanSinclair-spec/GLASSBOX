@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { Database, Moon, Sun, Menu, X } from 'lucide-react'
+import { GlassBoxLogo } from '@/components/logo'
+import { Moon, Sun, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
 export function Navbar() {
@@ -15,7 +16,7 @@ export function Navbar() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <GlassBoxLogo className="h-6 w-6" />
             <span className="hidden font-bold sm:inline-block">Glass Box</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -44,7 +45,7 @@ export function Navbar() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Link href="/" className="flex items-center space-x-2 md:hidden">
-              <Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <GlassBoxLogo className="h-6 w-6" />
               <span className="font-bold">Glass Box</span>
             </Link>
           </div>

@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Database, AlertCircle } from 'lucide-react'
+import { GlassBoxLogo } from '@/components/logo'
+import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -41,7 +41,7 @@ export default function LoginPage() {
     <Card>
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Database className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+          <GlassBoxLogo className="h-10 w-10" />
         </div>
         <CardTitle className="text-2xl">Welcome back</CardTitle>
         <CardDescription>Sign in to your Glass Box account</CardDescription>
@@ -49,10 +49,10 @@ export default function LoginPage() {
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
-            <Alert variant="destructive">
+            <div className="flex items-center space-x-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md dark:text-red-400 dark:bg-red-950 dark:border-red-800">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+              <span>{error}</span>
+            </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Database, AlertCircle } from 'lucide-react'
+import { GlassBoxLogo } from '@/components/logo'
+import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [orgName, setOrgName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,7 +85,7 @@ export default function SignupPage() {
     <Card>
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Database className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+          <GlassBoxLogo className="h-10 w-10" />
         </div>
         <CardTitle className="text-2xl">Create your account</CardTitle>
         <CardDescription>Start monitoring your AI agents today</CardDescription>
@@ -92,10 +93,16 @@ export default function SignupPage() {
       <CardContent>
         <form onSubmit={handleSignup} className="space-y-4">
           {error && (
-            <Alert variant="destructive">
+            <div className="flex items-center space-x-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md dark:text-red-400 dark:bg-red-950 dark:border-red-800">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+              <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center space-x-2 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md dark:text-green-400 dark:bg-green-950 dark:border-green-800">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>{success}</span>
+            </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
