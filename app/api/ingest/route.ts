@@ -5,6 +5,19 @@ import { hashApiKey } from '@/lib/utils'
 import { checkRateLimit } from '@/lib/api/rate-limit'
 import { PLANS } from '@/lib/constants'
 
+interface ApiKeyData {
+  org_id: string
+  revoked_at: string | null
+}
+
+interface SubscriptionData {
+  plan: string
+}
+
+interface EventData {
+  id: string
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check API key
@@ -50,7 +63,7 @@ export async function POST(request: NextRequest) {
       .from('api_keys')
       .select('org_id, revoked_at')
       .eq('key_hash', keyHash)
-      .single() as { data: { org_id: string; revoked_at: string | null } | null; error: any }
+      .single() as { data: ApiKeyData | null; error: any }
 
     if (keyError || !apiKeyData) {
       return NextResponse.json(
@@ -71,7 +84,7 @@ export async function POST(request: NextRequest) {
       .from('subscriptions')
       .select('plan')
       .eq('org_id', apiKeyData.org_id)
-      .single() as { data: { plan: string } | null; error: any }
+      .single() as { data: SubscriptionData | null; error: any }
 
     const plan = subscription?.plan || 'hacker'
     const planLimits = PLANS[plan as keyof typeof PLANS]
@@ -101,7 +114,7 @@ export async function POST(request: NextRequest) {
         ...validation.data
       })
       .select()
-      .single() as { data: { id: string } | null; error: any }
+      .single() as { data: EventData | null; error: any }
 
     if (insertError) {
       console.error('Insert error:', insertError)
