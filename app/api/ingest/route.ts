@@ -50,11 +50,18 @@ export async function POST(request: NextRequest) {
       .from('api_keys')
       .select('org_id, revoked_at')
       .eq('key_hash', keyHash)
-      .single()
+      .single() as { data: { org_id: string; revoked_at: string | null } | null; error: any }
 
-    if (keyError || !apiKeyData || apiKeyData.revoked_at) {
+    if (keyError || !apiKeyData) {
       return NextResponse.json(
         { error: 'Invalid API key' },
+        { status: 401 }
+      )
+    }
+
+    if (apiKeyData.revoked_at) {
+      return NextResponse.json(
+        { error: 'API key is revoked' },
         { status: 401 }
       )
     }
@@ -64,7 +71,7 @@ export async function POST(request: NextRequest) {
       .from('subscriptions')
       .select('plan')
       .eq('org_id', apiKeyData.org_id)
-      .single()
+      .single() as { data: { plan: string } | null; error: any }
 
     const plan = subscription?.plan || 'hacker'
     const planLimits = PLANS[plan as keyof typeof PLANS]
@@ -87,14 +94,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert event
-    const { data: event, error: insertError } = await supabase
+    const { data: event, error: insertError } = await (supabase as any)
       .from('events')
       .insert({
         org_id: apiKeyData.org_id,
         ...validation.data
       })
       .select()
-      .single()
+      .single() as { data: { id: string } | null; error: any }
 
     if (insertError) {
       console.error('Insert error:', insertError)
@@ -107,7 +114,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: true,
-        event_id: event.id,
+        event_id: event?.id,
         remaining_events: planLimits.events - (count || 0) - 1
       },
       { 
