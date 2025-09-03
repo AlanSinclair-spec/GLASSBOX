@@ -1,44 +1,38 @@
 export function GlassBoxLogo({ className = "h-8 w-8" }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 48 48"
       className={className}
+      viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Outer glass box frame */}
+      {/* 3D transparent box - isometric view */}
+      {/* Front face */}
       <path
-        d="M12 8 L36 8 L42 14 L42 34 L36 40 L12 40 L6 34 L6 14 Z"
+        d="M6 9.5V18.5L12 22L18 18.5V9.5L12 6L6 9.5Z"
         stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        className="text-blue-600 dark:text-blue-400"
-        opacity="0.8"
+        strokeWidth="1.5"
+        className="text-blue-500 dark:text-blue-400"
+        fill="currentColor"
+        fillOpacity="0.1"
       />
       
-      {/* Inner transparent box */}
+      {/* Top face */}
       <path
-        d="M8 14 L24 22 L40 14 M24 22 L24 42"
+        d="M6 9.5L12 6L18 9.5L12 13L6 9.5Z"
         stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        className="text-blue-600 dark:text-blue-400"
-        opacity="0.6"
+        strokeWidth="1.5"
+        className="text-blue-600 dark:text-blue-500"
+        fill="currentColor"
+        fillOpacity="0.05"
       />
       
-      {/* Data dots inside */}
-      <circle cx="16" cy="20" r="2" fill="currentColor" className="text-cyan-500" />
-      <circle cx="32" cy="20" r="2" fill="currentColor" className="text-green-500" />
-      <circle cx="24" cy="28" r="2" fill="currentColor" className="text-purple-500" />
-      
-      {/* Connecting lines (data flow) */}
+      {/* Visible edges for depth */}
       <path
-        d="M16 20 L24 28 L32 20"
+        d="M12 13V22M12 6V13M6 9.5L12 13L18 9.5"
         stroke="currentColor"
-        strokeWidth="1"
-        fill="none"
-        className="text-gray-400 dark:text-gray-600"
-        opacity="0.5"
+        strokeWidth="1.5"
+        className="text-blue-500 dark:text-blue-400"
       />
     </svg>
   )
