@@ -24,6 +24,7 @@ export default function SignupPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSuccess('')
 
     const supabase = createClient()
     
@@ -34,18 +35,47 @@ export default function SignupPage() {
     })
 
     if (authError) {
+      // Handle email confirmation errors gracefully
+      if (authError.message.includes('confirmation') || authError.message.includes('email') || authError.message.includes('sending')) {
+        // Email confirmation failed, but user might be created - try to proceed
+        setSuccess('Account created! Email confirmation failed, but you can still access your dashboard. Please contact support if needed.')
+        
+        // Try to sign in the user directly
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        
+        if (!signInError && signInData.user) {
+          await setupUserAccount(signInData.user.id)
+          return
+        }
+        
+        // If sign in also fails, show helpful message
+        setError('Account may have been created. Try signing in manually, or contact support.')
+        setLoading(false)
+        return
+      }
+      
       setError(authError.message)
       setLoading(false)
       return
     }
 
-    if (!authData.user) {
-      setError('Failed to create account')
-      setLoading(false)
-      return
+    // If we get here, signup was successful
+    if (authData.user) {
+      // Try to proceed with setup regardless of email confirmation status
+      try {
+        await setupUserAccount(authData.user.id)
+      } catch (setupError) {
+        // If setup fails, still show success for account creation
+        setSuccess('Account created! Please check your email and click the confirmation link to complete setup.')
+        setLoading(false)
+      }
     }
+  }
 
-    // Set up account data
+  const setupUserAccount = async (userId: string) => {
     try {
       const response = await fetch('/api/setup-account', {
         method: 'POST',
@@ -53,7 +83,7 @@ export default function SignupPage() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: authData.user.id,
+          userId,
           orgName: orgName || `${email.split('@')[0]}'s Organization`,
         }),
       })
@@ -63,21 +93,15 @@ export default function SignupPage() {
         throw new Error(data.error || 'Setup failed')
       }
 
-      // Check if email confirmation is required
-      if (authData.user.email_confirmed_at) {
-        // Email already confirmed (shouldn't happen but just in case)
+      // Setup successful - redirect to dashboard
+      setSuccess('Account created successfully! Redirecting to dashboard...')
+      setTimeout(() => {
         router.push('/dashboard')
-      } else {
-        // Show success message for email confirmation
-        setError('') // Clear any errors
-        alert('Success! Please check your email to confirm your account.')
-        router.push('/login')
-      }
+      }, 1500)
 
     } catch (err: any) {
       console.error('Setup error:', err)
-      setError('Account created but setup failed. Please contact support.')
-      setLoading(false)
+      throw err // Re-throw to be handled by caller
     }
   }
 
