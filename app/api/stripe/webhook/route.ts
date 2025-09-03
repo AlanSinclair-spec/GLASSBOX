@@ -4,6 +4,20 @@ import { createServiceSupabaseClient } from '@/lib/supabase/server'
 import { STRIPE_CONFIG } from '@/lib/stripe/config'
 import Stripe from 'stripe'
 
+interface SubscriptionUpsert {
+  org_id: string | undefined
+  stripe_customer_id: string
+  stripe_subscription_id: string
+  plan: string
+  status: string
+}
+
+interface SubscriptionUpdate {
+  status: string
+  current_period_end: string
+  updated_at: string
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const sig = request.headers.get('stripe-signature')!
@@ -36,7 +50,7 @@ export async function POST(request: NextRequest) {
         else if (priceId === STRIPE_CONFIG.prices.scale) plan = 'scale'
 
         // Update subscription
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('subscriptions')
           .upsert({
             org_id: session.metadata?.org_id,
@@ -44,7 +58,7 @@ export async function POST(request: NextRequest) {
             stripe_subscription_id: session.subscription as string,
             plan,
             status: 'active'
-          })
+          } as SubscriptionUpsert)
           .eq('org_id', session.metadata?.org_id)
 
         if (error) throw error
@@ -58,13 +72,13 @@ export async function POST(request: NextRequest) {
         const status = subscription.status
         const currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString()
 
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('subscriptions')
           .update({
             status,
             current_period_end: currentPeriodEnd,
             updated_at: new Date().toISOString()
-          })
+          } as SubscriptionUpdate)
           .eq('stripe_subscription_id', subscription.id)
 
         if (error) throw error
